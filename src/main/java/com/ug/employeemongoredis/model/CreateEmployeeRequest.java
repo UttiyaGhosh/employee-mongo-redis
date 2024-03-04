@@ -9,20 +9,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "employee")
-public class Employee {
+public class CreateEmployeeRequest {
 
-    @Id
-    @Field("_id")
-    private String id;
     private String name;
     private String designation;
-    private boolean active;
-    private Date joiningDate;
 }

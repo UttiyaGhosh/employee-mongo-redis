@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;
 
-public interface EmployeeRepository extends MongoRepository<Employee, String> {
+public interface EmployeeRepository extends MongoRepository<Employee, String>,EmployeeRepositoryCustom {
 }

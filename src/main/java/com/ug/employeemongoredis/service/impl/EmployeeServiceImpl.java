@@ -1,13 +1,16 @@
 package com.ug.employeemongoredis.service.impl;
 
+import com.ug.employeemongoredis.model.CreateEmployeeRequest;
 import com.ug.employeemongoredis.model.Employee;
+import com.ug.employeemongoredis.model.UpdateEmployeeRequest;
 import com.ug.employeemongoredis.repository.EmployeeRepository;
 import com.ug.employeemongoredis.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -16,32 +19,35 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Override
+    public Employee createEmployee(CreateEmployeeRequest createEmployeeRequest) {
+        final UUID employeeId = UUID.randomUUID();
+
+        return employeeRepository.save(
+                Employee.builder()
+                        .id(employeeId.toString())
+                        .name(createEmployeeRequest.getName())
+                        .designation(createEmployeeRequest.getDesignation())
+                        .active(true)
+                        .joiningDate(new Date())
+                        .build());
+    }
+    @Override
     public Optional<Employee> getEmployeeById(String id) {
         return employeeRepository.findById(id);
     }
 
     @Override
-    public Employee createEmployee(Employee employee) {
-        return employeeRepository.save(employee);
+    public Employee updateEmployee(UpdateEmployeeRequest updateEmployeeRequest) {
+        return employeeRepository.updateEmployee(Employee.builder()
+                .id(updateEmployeeRequest.getId().toString())
+                .name(updateEmployeeRequest.getName())
+                .designation(updateEmployeeRequest.getDesignation())
+                .build());
     }
 
     @Override
-    public Employee updateEmployee(String id, Employee employee) {
-        if (employeeRepository.existsById(id)) {
-            employee.setId(id); // Assuming you have setId method in Employee class
-            return employeeRepository.save(employee);
-        } else {
-            throw new RuntimeException("Employee not found with id: " + id);
-        }
-    }
-
-    @Override
-    public void deleteEmployee(String id) {
-        if (employeeRepository.existsById(id)) {
-            employeeRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Employee not found with id: " + id);
-        }
+    public boolean exists(String id){
+        return employeeRepository.existsById(id);
     }
 }
 

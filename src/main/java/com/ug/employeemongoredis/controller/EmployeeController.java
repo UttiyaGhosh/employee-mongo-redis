@@ -1,6 +1,8 @@
 package com.ug.employeemongoredis.controller;
 
+import com.ug.employeemongoredis.model.CreateEmployeeRequest;
 import com.ug.employeemongoredis.model.Employee;
+import com.ug.employeemongoredis.model.UpdateEmployeeRequest;
 import com.ug.employeemongoredis.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,36 +20,23 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-        Employee savedEmployee = employeeService.createEmployee(employee);
+    public ResponseEntity<Employee> createEmployee(@RequestBody CreateEmployeeRequest createEmployeeRequest) {
+        Employee savedEmployee = employeeService.createEmployee(createEmployeeRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") String id) {
         Optional<Employee> employee = employeeService.getEmployeeById(id);
         return employee.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id, @RequestBody Employee employee) {
-        Optional<Employee> existingEmployee = employeeService.getEmployeeById(id);
-        if (existingEmployee.isPresent()) {
-            employee.setId(id);
-            Employee updatedEmployee = employeeService.updateEmployee(employee);
+    @PutMapping
+    public ResponseEntity<Employee> updateEmployee(@RequestBody UpdateEmployeeRequest updateEmployeeRequest) {
+        if (employeeService.exists(updateEmployeeRequest.getId())) {
+            Employee updatedEmployee = employeeService.updateEmployee(updateEmployeeRequest);
             return ResponseEntity.ok(updatedEmployee);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable("id") Long id) {
-        Optional<Employee> employee = employeeService.getEmployeeById(id);
-        if (employee.isPresent()) {
-            employeeService.deleteEmployee(id);
-            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
