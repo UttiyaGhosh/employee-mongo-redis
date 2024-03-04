@@ -15,5 +15,4 @@ public interface EmployeeService {
 
     Employee updateEmployee(UpdateEmployeeRequest updateEmployeeRequest);
 
-    boolean exists(String id);
 }

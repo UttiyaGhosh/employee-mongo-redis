@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,7 +33,7 @@ public class EmployeeController {
 
     @PutMapping
     public ResponseEntity<Employee> updateEmployee(@RequestBody UpdateEmployeeRequest updateEmployeeRequest) {
-        if (employeeService.exists(updateEmployeeRequest.getId())) {
+        if (employeeService.getEmployeeById(updateEmployeeRequest.getId()).isPresent()) {
             Employee updatedEmployee = employeeService.updateEmployee(updateEmployeeRequest);
             return ResponseEntity.ok(updatedEmployee);
         } else {
