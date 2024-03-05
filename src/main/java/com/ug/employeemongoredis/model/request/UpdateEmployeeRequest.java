@@ -1,4 +1,4 @@
-package com.ug.employeemongoredis.model;
+package com.ug.employeemongoredis.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

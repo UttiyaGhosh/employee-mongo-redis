@@ -1,8 +1,8 @@
 package com.ug.employeemongoredis.controller;
 
-import com.ug.employeemongoredis.model.CreateEmployeeRequest;
 import com.ug.employeemongoredis.model.Employee;
-import com.ug.employeemongoredis.model.UpdateEmployeeRequest;
+import com.ug.employeemongoredis.model.request.CreateEmployeeRequest;
+import com.ug.employeemongoredis.model.request.UpdateEmployeeRequest;
 import com.ug.employeemongoredis.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,16 +26,26 @@ public class EmployeeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") String id) {
-        Optional<Employee> employee = employeeService.getEmployeeById(id);
+        Optional<Employee> employee = employeeService.getEmployee(id);
         return employee.map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PutMapping
     public ResponseEntity<Employee> updateEmployee(@RequestBody UpdateEmployeeRequest updateEmployeeRequest) {
-        if (employeeService.getEmployeeById(updateEmployeeRequest.getId()).isPresent()) {
+        if (employeeService.getEmployee(updateEmployeeRequest.getId()).isPresent()) {
             Employee updatedEmployee = employeeService.updateEmployee(updateEmployeeRequest);
             return ResponseEntity.ok(updatedEmployee);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteEmployee(@PathVariable("id") String id) {
+        if (employeeService.getEmployee(id).isPresent()) {
+            employeeService.deleteEmployee(id);
+            return ResponseEntity.ok("Successfully Deleted employee with id: "+id);
         } else {
             return ResponseEntity.notFound().build();
         }
